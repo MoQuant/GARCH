@@ -66,6 +66,21 @@ export default class App extends Component {
           }}
         />
       )
+      hold.push(
+        <Plot
+          data={[{
+            x: response['x2'],
+            y: response['y2'],
+            type:'lines',
+            marker:{
+              color: 'blue'
+            }
+          }]}
+          layout={{
+            title: "Stock Price Simulation for " + this.state.ticker + " | Current Price: " + response['price']
+          }}
+        />
+      )
     }
     return hold 
   }

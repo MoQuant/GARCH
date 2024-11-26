@@ -4,7 +4,7 @@
 #include <stdio.h>
 
 double dWT(){
-    int num = 10;
+    int num = 3;
     double y = (rand() % (2*num + 1)) - num;
     return y/100.0;
 }
