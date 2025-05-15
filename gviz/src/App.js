@@ -1,11 +1,14 @@
 import React, { Component, Fragment } from 'react'
 import Plot from 'react-plotly.js'
 
+// Create App class
 export default class App extends Component {
 
+  // Declare constructor
   constructor(){
     super()
 
+    // Set global variables in state
     this.state = {
       response: null,
       progress: 'Waiting for Forecast',
@@ -17,13 +20,18 @@ export default class App extends Component {
       days: 1.0
     }
 
+    // These functions change the stock ticker, import the data with a button click, and plot the volatility
+    // forecasted from the GARCH Model
     this.changeTicker = this.changeTicker.bind(this)
     this.clickButton = this.clickButton.bind(this)
     this.plotData = this.plotData.bind(this)
   }
 
   componentDidMount(){
+    // Connect to the Python Server
     const socket = new WebSocket("ws://localhost:8080")
+
+    // Receive messages from the server and differentiate between updates and plotting
     socket.onmessage = (evt) => {
       const resp = JSON.parse(evt.data)
       if(resp['type'] == 'message'){
@@ -33,9 +41,11 @@ export default class App extends Component {
         this.setState({ response: resp['payload'] })
       }
     }
+    // Declares socket in state to send messages to Python server
     this.setState({ sock: socket})
   }
 
+  // Responsible for sending the server parameters if the assigned button is clicked
   clickButton(evt){
     const { ticker, sock, fn, paths, steps, days } = this.state
     const message = JSON.stringify([ticker, fn, paths, steps, days])
@@ -43,13 +53,17 @@ export default class App extends Component {
     evt.preventDefault()
   }
 
+  // Changes to the most current inputted stock ticker and parameters
   changeTicker(evt){
     this.setState({ [evt.target.name]: evt.target.value })
   }
 
+  // Plots the GARCH model and a Geometric Brownian Motion simulation based on the forecasted volatilities
   plotData(){
     const { response } = this.state
     const hold = []
+
+    // Makes sure server response has been filled
     if(response !== null){
       hold.push(
         <Plot
@@ -87,6 +101,8 @@ export default class App extends Component {
 
   render(){
 
+    // This code makes the interface with the inputable parameters which are sent to the Python server to generate
+    // plots on the GARCH model and GBM simulation
     return(
       <Fragment>
         <center>
